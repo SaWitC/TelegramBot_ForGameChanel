@@ -1,0 +1,9 @@
+D:\проекты\TelegramBot_GamesPc\publish\TelegramBot_GamesPc.exe
+D:\проекты\TelegramBot_GamesPc\publish\TelegramBot_GamesPc.dll
+D:\проекты\TelegramBot_GamesPc\publish\TelegramBot_GamesPc.deps.json
+D:\проекты\TelegramBot_GamesPc\publish\TelegramBot_GamesPc.runtimeconfig.json
+D:\проекты\TelegramBot_GamesPc\publish\TelegramBot_GamesPc.pdb
+D:\проекты\TelegramBot_GamesPc\publish\Newtonsoft.Json.dll
+D:\проекты\TelegramBot_GamesPc\publish\System.Threading.Channels.dll
+D:\проекты\TelegramBot_GamesPc\publish\Telegram.Bot.dll
+D:\проекты\TelegramBot_GamesPc\publish\Telegram.Bot.Extensions.Polling.dll
