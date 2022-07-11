@@ -7,6 +7,7 @@ using Telegram.Bot.Types;
 using TelegramBot_GamesPc.Data;
 using Microsoft.EntityFrameworkCore;
 using TelegramBot_GamesPc.Models;
+using TelegramBot_GamesPc.Commands;
 
 namespace TelegramBot_GamesPc
 {
@@ -21,6 +22,7 @@ namespace TelegramBot_GamesPc
                 gl.Description = "1111";
                 gl.Title = "Gunfire Reborn";
                 gl.GameLink="https://t.me/c/1272975293/2";
+                gl.ImageLink = "https://www.savingcontent.com/wp-content/uploads/2020/08/GunfireReborn-keyart_new.png)";
                 context.Add(gl);
                 Console.WriteLine("Done");
                 context.SaveChanges();
@@ -44,61 +46,62 @@ namespace TelegramBot_GamesPc
             Console.ReadLine();
         }
 
+        private static bool IsGamesActive = false;
+
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            // Некоторые действия
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(update));
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
-                var message = update.Message;
-                if (message.Text.ToLower().Contains("/games"))
+                try
                 {
-                    //await botClient.SendTextMessageAsync(message.Chat, "Ищу");
-
-                    string GameTitle = "";
-                    GameTitle = message.Text.Replace("/games","");
-                    GameTitle=GameTitle.Trim();
-
-                    string Message = "";
-
-                    if (!string.IsNullOrEmpty(GameTitle))
+                    var message = update.Message;
+                    UserCommands userCommands = new UserCommands(message, botClient);
+                    //wait gameTitle
+                    if (!message.Text.Contains("/"))
                     {
-                        using (AppDBContext context = new AppDBContext())
-                        {
-                            var Game = await context.gameLinkModels.FirstOrDefaultAsync(o => o.Title.ToLower().Contains(GameTitle.ToLower()));
-                            if (Game != null)
-                            {
-                                Message += $"{Game.Title}\n{Game.GameLink}";
-                            }
-                        }
+                        await userCommands.GameUserCommand(message.Text);
+                        IsGamesActive = userCommands.IsGamesActive;
+                        return;
                     }
-
-                    if (!String.IsNullOrEmpty(Message))
+                    // games
+                    if (message.Text.ToLower().Contains("/games"))
                     {
-                        await botClient.SendTextMessageAsync(message.Chat,Message);
+                        await userCommands.GameUserCommand();
+                        return;
                     }
-                    else
+                    //start
+                    if (message.Text.ToLower() == "/start")
                     {
-                        await botClient.SendTextMessageAsync(message.Chat, "Ничего не нашел(");
+                        await userCommands.StartUserCommand();
+                        IsGamesActive = userCommands.IsGamesActive;
+                        return;
                     }
-
-                   
-
-                    
+                    //info
+                    if (message.Text.ToLower() == "/info")
+                    {
+                        await userCommands.InfoUserCommand();
+                        return;
+                    }
+                    //getid
+                    if (message.Text.ToLower() == "/getid")
+                    {
+                        await userCommands.GetId();
+                        return;
+                    }
+                    //gefault
+                    await botClient.SendTextMessageAsync(message.Chat, "Прости но я тебя не понял");
                 }
-                if (message.Text.ToLower() == "/start")
+                catch
                 {
-                    await botClient.SendTextMessageAsync(message.Chat, "Добро пожаловать на борт, добрый путник!");
-                    return;
+
                 }
-                await botClient.SendTextMessageAsync(message.Chat, "Прости но я тебя не понял");
                 //await botClient.SendTextMessageAsync(, "Привет-привет!!");
             }
         }
 
         public static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
-            // Некоторые действия
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
         }
 

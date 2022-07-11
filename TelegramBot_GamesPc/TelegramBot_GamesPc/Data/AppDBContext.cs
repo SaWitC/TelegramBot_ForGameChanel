@@ -12,7 +12,7 @@ namespace TelegramBot_GamesPc.Data
         {
             //Database.EnsureDeleted();
 
-            //Database.EnsureCreated();
+            Database.EnsureCreated();
         }
 
         public DbSet<GameLinkModel> gameLinkModels { get; set; }
